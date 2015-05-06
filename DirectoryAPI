@@ -1,0 +1,217 @@
+function addUser(email,firstname,lastname,pass) {
+//  email='tgonblack2@tgon.esy.es';
+//  firstname='Tgon2';
+//  lastname='black';
+//  pass='1234qwerR';
+  Logger.log(email);
+      try{
+  var user = {
+
+    primaryEmail: email,
+    name: {
+      givenName: firstname,
+      familyName: lastname
+    },
+    // Generate a random password string.
+    password: pass
+  };
+       
+  AdminDirectory.Users.insert(user);
+  SpreadsheetApp.getUi().alert('bạn vừa tạo '+email+' thành công');
+}catch(e){
+  SpreadsheetApp.getUi().alert('Khoi tao khong thanh cong tai email: '+email+'. Kiem tra lai du lieu');
+}
+  
+}
+
+function getUser(userEmail){
+  try{
+  //userEmail = 'abcd@tgon.esy.es';
+  var user = AdminDirectory.Users.get(userEmail);
+ // Logger.log(user.id);
+ // Logger.log('User data:\n %s', JSON.stringify(user, null, 2));
+  return user;
+  }
+  catch(e){
+    
+    return false;
+  }
+}
+
+function listAllUser(domain,orderBy){
+  domain = 'edu.gimasys.com';
+  orderBy ='givenName'
+  var pageToken, page;
+  do {
+    page = AdminDirectory.Users.list({
+      domain: domain,
+      orderBy: orderBy,
+      maxResults: 500,
+      pageToken: pageToken
+    });
+    var users = page.users;
+    
+    if (users) {
+      for (var i = 0; i < users.length; i++) {
+        var user = users[i];
+        Logger.log("!!!!!!!!"+user);
+        Logger.log('%s (%s)', user.name.fullName, user.primaryEmail);
+      }
+    } else {
+      Logger.log('No users found.');
+    }
+    pageToken = page.nextPageToken;
+  } while (pageToken);
+}
+
+function updateUser(mail,id,etag,primaryEmail,fistName,lastName,fullName,isAdmin,isDelegatedAdmin,lastLoginTime,creationTime,deletionTime,agreedToTerms,password){
+ var  userSource = {
+    "kind": "admin#directory#user",
+  "id": id,
+  "etag": etag,
+  "primaryEmail": primaryEmail,
+  "name": {
+    "givenName": fistName,
+    "familyName": lastName,
+    "fullName": fullName
+  },
+  "isAdmin": isAdmin,
+  "isDelegatedAdmin": isDelegatedAdmin,
+  "lastLoginTime": lastLoginTime,
+  "creationTime": creationTime,
+  "deletionTime": deletionTime,
+  "agreedToTerms": agreedToTerms,
+  "password": string,
+  "hashFunction": string,
+  "suspended": boolean,
+  "suspensionReason": string,
+  "changePasswordAtNextLogin": boolean,
+  "ipWhitelisted": boolean,
+  "ims": [
+    {
+      "type": string,
+      "customType": string,
+      "protocol": string,
+      "customProtocol": string,
+      "im": string,
+      "primary": boolean
+    }
+  ],
+  "ims": string,
+  "emails": [
+    {
+      "address": string,
+      "type": string,
+      "customType": string,
+      "primary": boolean
+    }
+  ],
+  "emails": string,
+  "externalIds": [
+    {
+      "value": string,
+      "type": string,
+      "customType": string
+    }
+  ],
+  "externalIds": string,
+  "relations": [
+    {
+      "value": string,
+      "type": string,
+      "customType": string
+    }
+  ],
+  "relations": string,
+  "addresses": [
+    {
+      "type": string,
+      "customType": string,
+      "sourceIsStructured": boolean,
+      "formatted": string,
+      "poBox": string,
+      "extendedAddress": string,
+      "streetAddress": string,
+      "locality": string,
+      "region": string,
+      "postalCode": string,
+      "country": string,
+      "primary": boolean,
+      "countryCode": string
+    }
+  ],
+  "addresses": string,
+  "organizations": [
+    {
+      "name": string,
+      "title": string,
+      "primary": boolean,
+      "type": string,
+      "customType": string,
+      "department": string,
+      "symbol": string,
+      "location": string,
+      "description": string,
+      "domain": string,
+      "costCenter": string
+    }
+  ],
+  "organizations": string,
+  "phones": [
+    {
+      "value": string,
+      "primary": boolean,
+      "type": string,
+      "customType": string
+    }
+  ],
+  "phones": string,
+  "aliases": [
+    string
+  ],
+  "nonEditableAliases": [
+    string
+  ],
+  "customerId": string,
+  "orgUnitPath": string,
+  "isMailboxSetup": boolean,
+  "includeInGlobalAddressList": boolean,
+  "thumbnailPhotoUrl": string,
+  
+  };
+  AdminDirectory.Users.update(userSource,mail );
+}
+
+function deleteUser(email){
+  Logger.log(email);
+  try{
+  AdminDirectory.Users.remove(email);
+    SpreadsheetApp.getUi().alert('Complete');
+  }catch(e){
+    SpreadsheetApp.getUi().alert('UnComplete');
+  }
+}
+
+function listAllUsers(domain) {
+  domain ='edu.gimasys.com'
+  var pageToken, page;
+  do {
+    page = AdminDirectory.Users.list({
+      domain: domain,
+      orderBy: 'givenName',
+      maxResults: 100,
+      pageToken: pageToken
+    });
+    var users = page.users;
+    if (users) {
+      for (var i = 0; i < users.length; i++) {
+        var user = users[i];
+        Logger.log("Test?????????????????????"+user);
+       // Logger.log('%s (%s)', user.name.fullName, user.primaryEmail);
+      }
+    } else {
+      Logger.log('No users found.');
+    }
+    pageToken = page.nextPageToken;
+  } while (pageToken);
+}
