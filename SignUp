@@ -1,0 +1,111 @@
+
+<link rel="stylesheet" href="https://raw.githubusercontent.com/tgonDragon/RegisteForm/master/pwdwidget.css">
+
+<link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons.css">
+<script src="https://raw.githubusercontent.com/tgonDragon/RegisteForm/master/pwdwidget.js">
+</script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+</script>
+<style>
+.branding-below {
+  bottom: 56px;
+  top: 0;
+}
+
+.branding-text {
+  left: 7px;
+  position: relative;
+  top: 3px;
+}
+
+.col-contain {
+  overflow: hidden;
+}
+
+.col-one {
+  float: left;
+  width: 50%;
+}
+
+.logo {
+  vertical-align: middle;
+}
+
+.radio-spacer {
+  height: 20px;
+}
+
+.width-100 {
+  width: 100%;
+}
+</style>
+
+<div class='sidebar branding-below'>
+<b>Register<b>
+<br>
+<br>
+<form method="post"  action="">
+    <div class='block'>
+		<label for='firstname'>First Name: </label><br />
+		<input type="text" id='firstname' name="firstname"/>
+	</div>
+	<div class='block'>
+		<label for='lastname'>Last Name: </label><br />
+		<input type="text" id='lastname' name="lastname"/>
+	</div>
+	<div class='block'>
+		<label for='email'>Email:</label><br />
+		<input type="text" id='email' name="email"/>
+        <div id="contentMail"></div>
+	</div>
+	<div class='block'>
+		<label for='regpwd'>Password:</label> <br />
+		<div class='pwdwidgetdiv' id='thepwddiv'></div>
+		<script  type="text/javascript" >
+		var pwdwidget = new PasswordWidget('thepwddiv','regpwd');
+		pwdwidget.MakePWDWidget();
+		</script>
+		
+	</div>
+	<div class='block' id="button-bar"><br /><br />
+	<input type="submit" name='submit' class="create" id="run-register" value="Register" />
+	</div>
+</form>
+
+
+<script>
+$(function() {
+    $('#run-register').click(runRegister);
+    
+  
+  });
+  function onSuccess() {
+    alert('Đăng kí thành công');
+  }
+
+function showError(msg, element) {
+    var div = $('<div id="error" class="error">' + msg + '</div>');
+    $(element).after(div);
+  }
+function showEmail(email,element)
+{
+    var mail =  google.script.run.getCurrentEmail();
+     var div = $('<div id= "email2" class= "email2"> @'+email+"</div>");
+    $(element).after(div);
+}
+ 
+function runRegister(){
+    
+    
+    var firstname = $('input[name=firstname]').val();
+    var lastname = $('input[name=lastname]').val();
+    var email = $('input[name=email]').val();
+    var pass = $('input[name=regpwd]').val();
+    
+    google.script.run
+        .withSuccessHandler(onSuccess)
+        .addUser(email,firstname,lastname,pass);
+        google.script.host.close();
+
+}
+</script>
