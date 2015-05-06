@@ -1,0 +1,8 @@
+<div>
+<p>Hi,</p>
+<br>
+
+<p>Have a user has name "<? data1?>" in your system has reached <?data2?>% storage. You can buy more storage.</p>
+<br>
+<p>Sincerely,</p>
+</div>
