@@ -1,0 +1,20 @@
+function sendMail(to,cc,sub,body) {
+   var me = Session.getActiveUser().getEmail();
+ var aliases = GmailApp.getAliases();
+ Logger.log(body);
+ if (aliases.length > 0) {
+   GmailApp.sendEmail(me, sub, body,{'from': aliases[0], 'cc': cc, 'htmlBody': body});
+ } else {
+   GmailApp.sendEmail(me, sub, {'cc': cc, 'htmlBody': body});
+ }
+}
+
+function testSchemas() {
+  var htmlBody = HtmlService.createHtmlOutputFromFile('mail_template').getContent();
+
+  MailApp.sendEmail({
+    to: Session.getActiveUser().getEmail(),
+    subject: 'Test Email markup - ' + new Date(),
+    htmlBody: htmlBody,
+  });
+}
