@@ -1,0 +1,107 @@
+function generateUserUsageReport() {
+   var today = new Date();
+  var oneWeekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+  var timezone = Session.getScriptTimeZone();
+  Logger.log(oneWeekAgo);
+  var date = Utilities.formatDate(oneWeekAgo, timezone, 'yyyy-MM-dd');
+  
+  var parameters = [
+    'accounts:last_login_time',
+    'gmail:num_emails_received',
+    'docs:num_docs',
+    'accounts:gmail_used_quota_in_mb',
+    'accounts:drive_used_quota_in_mb',
+    'accounts:gplus_photos_used_quota_in_mb',
+    'accounts:used_quota_in_mb',
+    'accounts:total_quota_in_mb',
+    'accounts:used_quota_in_percentage'
+    
+  ];
+   var rows = [];
+  var link = "";
+  var pageToken, page;
+  do {
+    page = AdminReports.UserUsageReport.get('all', date, {
+      parameters: parameters.join(','),
+      maxResults: 500,
+      pageToken: pageToken
+    });
+    var reports = page.usageReports;
+    if (reports) {
+      
+      for (var i = 0; i < reports.length; i++) {
+        var report = reports[i];
+        var parameterValues = getParameterValues(report.parameters);
+       // Logger.log(i);
+        var total;
+        Logger.log("1:"+parameterValues['accounts:total_quota_in_mb']);
+        if(parameterValues['accounts:total_quota_in_mb'] == -1){
+          total = 'unlimited';
+        }else{
+          total =parameterValues['accounts:total_quota_in_mb'];
+        }
+        link = addLinkChartPie('Repport for '+report.entity.userEmail,parameterValues['accounts:total_quota_in_mb'],parameterValues['accounts:gmail_used_quota_in_mb'],parameterValues['accounts:drive_used_quota_in_mb'],parameterValues['accounts:gplus_photos_used_quota_in_mb']);
+        var row = [
+          
+          report.entity.userEmail,
+          parameterValues['docs:num_docs'],
+          parameterValues['gmail:num_emails_received'],
+          parameterValues['accounts:gmail_used_quota_in_mb'],
+          parameterValues['accounts:drive_used_quota_in_mb'],
+          parameterValues['accounts:gplus_photos_used_quota_in_mb'],
+          parameterValues['accounts:used_quota_in_mb'],
+          total,
+          parameterValues['accounts:used_quota_in_percentage']+'%',
+          link
+        ];
+        
+        Logger.log(row);
+        rows.push(row);
+        var u = i+2;
+        Logger.log(u);
+        var strRange = 'D'+ u +':G'+u;
+        
+      }
+    }
+    pageToken = page.nextPageToken;
+  } while (pageToken);
+
+  if (rows.length > 0) {
+    //var spreadsheet = SpreadsheetApp.create('Google Apps User Usage Report');
+    var spread = SpreadsheetApp.getActive();
+    
+    var sheet = spread.getSheetByName("Manager storage for users");
+   
+    deleteData(sheet);
+
+    // Append the headers.
+//    var headers = ['Date', 'User', 'Last Login', 'Num Emails Received',
+//        'Num Docs'];
+//    sheet.appendRow(headers);
+
+    // Append the results.
+    sheet.getRange(2, 1, rows.length, 10).setValues(rows);
+    
+
+  //  Logger.log('Report spreadsheet created: %s', spreadsheet.getUrl());
+  } else {
+    Logger.log('No results returned.');
+  }
+}
+function getParameterValues(parameters) {
+  return parameters.reduce(function(result, parameter) {
+    var name = parameter.name;
+    var value;
+    if (parameter.intValue !== undefined) {
+      value = parameter.intValue;
+    } else if (parameter.stringValue !== undefined) {
+      value = parameter.stringValue;
+    } else if (parameter.datetimeValue !== undefined) {
+      value = new Date(parameter.datetimeValue);
+    } else if (parameter.boolValue !== undefined) {
+      value = parameter.boolValue;
+    }
+    result[name] = value;
+    return result;
+  }, {});
+}
