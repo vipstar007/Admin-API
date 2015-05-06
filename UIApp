@@ -1,0 +1,29 @@
+function doGet(e) {
+  var free = 0;
+  if(e.parameter.t == -1){
+    free = 99999999;
+  }else{
+    free = e.parameter.t - e.parameter.e -e.parameter.d - e.parameter.p;
+  }
+   var data = Charts.newDataTable()
+   
+      .addColumn(Charts.ColumnType.STRING, 'Category storage')
+      .addColumn(Charts.ColumnType.NUMBER, 'Value')
+      
+      .addRow(['Email Storage', e.parameter.e])
+      .addRow(['Drive Storage', e.parameter.d])
+      .addRow(['Image Plus Storage', e.parameter.p])
+      .addRow(['Free Storage', free])
+      .build();
+
+  var chart = Charts.newPieChart()
+      .set3D()
+      .setDataTable(data)
+      .setDimensions(600, 500)
+      .setTitle(e.parameter.str)
+      .build();
+
+  var uiApp = UiApp.createApplication().setTitle('My Chart');
+  uiApp.add(chart);
+  return uiApp;
+}
