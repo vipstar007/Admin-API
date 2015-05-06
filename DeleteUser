@@ -1,0 +1,66 @@
+<link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons.css">
+<!-- The CSS package above applies Google styling to buttons and other elements. -->
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+</script>
+<style>
+.branding-below {
+  bottom: 56px;
+  top: 0;
+}
+
+.branding-text {
+  left: 7px;
+  position: relative;
+  top: 3px;
+}
+
+.col-contain {
+  overflow: hidden;
+}
+
+.col-one {
+  float: left;
+  width: 50%;
+}
+
+.logo {
+  vertical-align: middle;
+}
+
+.radio-spacer {
+  height: 20px;
+}
+
+.width-100 {
+  width: 100%;
+}
+</style>
+<div class="sidebar branding-below">
+  <form>
+  <h1>Delete User</h1>
+     <div class="block">
+      <label for="email">Input email a user</label>
+      <input type="text" id='email' name="email"/>
+    </div>
+
+   <div class="block" id="button-bar">
+      <button class="red" id="run-delete">Delete</button>
+      
+    </div>
+  </form>
+</div>
+<script>
+$(function() {
+    $('#run-delete').click(runDelete);
+ });
+  function runDelete(){
+    
+    var email = $('input[name=email]').val();
+    google.script.run
+        .deleteUser(email);
+    google.script.host.close();
+        
+
+}
+</script>
